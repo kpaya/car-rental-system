@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:15.0-alpine
+    container_name: postgres15
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=admin
+    networks:
+      - postgresDb
+    ports:
+      - 5432:5432
+
+networks:
+  postgresDb:
+    driver: bridge
