@@ -7,11 +7,11 @@ import (
 )
 
 type Location struct {
-	StreetAddress string `validate:"required"`
+	StreetAddress string
 	City          string
 	State         string
-	Zipcode       string `validate:"required"`
-	Country       string `validate:"required"`
+	Zipcode       string
+	Country       string
 }
 
 func NewAddress(streetAddress string, city string, state string, zipcode string, country string) *Location {

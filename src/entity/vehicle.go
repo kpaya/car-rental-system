@@ -8,6 +8,23 @@ import (
 )
 
 type VehicleStatus string
+type CarType string
+type VanType string
+
+const (
+	Economy      CarType = "Economy"
+	Compact      CarType = "Compact"
+	Intermediate CarType = "Intermediate"
+	Standard     CarType = "Standard"
+	FullSize     CarType = "FullSize"
+	Premium      CarType = "Premium"
+	Luxury       CarType = "Luxury"
+)
+
+const (
+	Passenger VanType = "Passenger"
+	Cargo     VanType = "Cargo"
+)
 
 const (
 	Avaliable     VehicleStatus = "Avaliable"
@@ -17,6 +34,31 @@ const (
 	BeingServiced VehicleStatus = "BeingServiced"
 	Other         VehicleStatus = "Other"
 )
+
+type Car struct {
+	Type CarType
+	Vehicle
+}
+
+type Truck struct {
+	Type string
+	Vehicle
+}
+
+type SUV struct {
+	Type string
+	Vehicle
+}
+
+type Van struct {
+	Type VanType
+	Vehicle
+}
+
+type Motorcycle struct {
+	Type string
+	Vehicle
+}
 
 type Vehicle struct {
 	ID                string `validate:"uuid4"`
