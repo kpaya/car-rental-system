@@ -44,7 +44,7 @@ type User struct {
 	Name     string        `json:"name" validate:"required"`
 	Password string        `json:"-" validate:"required"`
 	Status   AccountStatus `json:"status" validate:"required"`
-	Email    string        `json:"email" validate:"required"`
+	Email    string        `json:"email" validate:"email,required"`
 	Phone    string        `json:"phone" validate:"required"`
 	Address  value_object.Location
 }

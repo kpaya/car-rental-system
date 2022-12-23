@@ -1,2 +1,5 @@
 .env
 .vscode/*
+air
+.air.toml
+tmp/

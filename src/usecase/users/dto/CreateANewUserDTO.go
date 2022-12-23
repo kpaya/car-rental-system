@@ -11,10 +11,9 @@ type InputCreateANewUserDTO struct {
 }
 
 type OutputCreateANewUserDTO struct {
-	Id       string
-	Name     string
-	Email    string
-	Password string
-	Status   entity.AccountStatus
-	Phone    string
+	Id     string
+	Name   string
+	Email  string
+	Status entity.AccountStatus
+	Phone  string
 }

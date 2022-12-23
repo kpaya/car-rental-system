@@ -34,6 +34,7 @@ func (u *CreateANewUserUseCase) Execute(input dto.InputCreateANewUserDTO) (dto.O
 		Name:   user.Name,
 		Email:  user.Email,
 		Status: user.Status,
+		Phone:  user.Phone,
 	}
 
 	return output, nil

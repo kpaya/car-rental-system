@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 
@@ -32,7 +33,7 @@ func main() {
 	app.Post("/user", func(c *fiber.Ctx) error {
 		var input dto.InputCreateANewUserDTO
 		if err := json.Unmarshal(c.Body(), &input); err != nil {
-			code := 400
+			code := fiber.StatusBadRequest
 			return c.Status(code).JSON(fiber.Map{
 				"msg":  fmt.Errorf(`error: %s`, err).Error(),
 				"code": code,
@@ -48,7 +49,30 @@ func main() {
 				"code": code,
 			})
 		}
-		c.JSON(output)
+		c.Status(fiber.StatusCreated).JSON(output)
+		return nil
+	})
+
+	app.Get("/user/:id", func(c *fiber.Ctx) error {
+		id := c.Params("id")
+		if id == "" {
+			code := fiber.StatusBadRequest
+			return c.Status(code).JSON(fiber.Map{
+				"msg":  fmt.Errorf(`error: %s`, errors.New("you must provide a valide id")).Error(),
+				"code": code,
+			})
+		}
+		repository := repository.NewUserRepository(Db)
+		usecase := usecase.NewFindAUserByIdUseCase(repository)
+		output, err := usecase.Execute(dto.InputFindAUserByIdDTO{Id: id})
+		if err != nil {
+			code := 400
+			return c.Status(code).JSON(fiber.Map{
+				"msg":  fmt.Errorf(`error: %s`, err).Error(),
+				"code": code,
+			})
+		}
+		c.Status(fiber.StatusOK).JSON(output)
 		return nil
 	})
 
