@@ -8,7 +8,6 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
-	"github.com/kpaya/car-rental-system/src/entity"
 	"github.com/kpaya/car-rental-system/src/infra/database"
 	"github.com/kpaya/car-rental-system/src/repository"
 	usecase "github.com/kpaya/car-rental-system/src/usecase/users"
@@ -31,39 +30,28 @@ func main() {
 	app := fiber.New()
 
 	app.Post("/user", func(c *fiber.Ctx) error {
-		user := entity.User{}
-		json.Unmarshal(c.Body(), &user)
-		if err := user.Validate(); err != nil {
-			return c.Status(404).JSON(fiber.Map{
+		var input dto.InputCreateANewUserDTO
+		if err := json.Unmarshal(c.Body(), &input); err != nil {
+			code := 400
+			return c.Status(code).JSON(fiber.Map{
 				"msg":  fmt.Errorf(`error: %s`, err).Error(),
-				"code": 404,
+				"code": code,
 			})
 		}
 		repository := repository.NewUserRepository(Db)
 		usecase := usecase.NewCreateANewUserUseCase(repository)
-		output, err := usecase.Execute(dto.InputCreateANewUserDTO{
-			Name:     user.Name,
-			Email:    user.Email,
-			Password: user.Password,
-			Status:   entity.Active,
-			Phone:    user.Phone,
-		})
+		output, err := usecase.Execute(input)
 		if err != nil {
-			return c.Status(404).JSON(fiber.Map{
+			code := 400
+			return c.Status(code).JSON(fiber.Map{
 				"msg":  fmt.Errorf(`error: %s`, err).Error(),
-				"code": 404,
+				"code": code,
 			})
 		}
 		c.JSON(output)
 		return nil
 	})
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
-			"code": "Oka",
-		})
-	})
-
-	app.Listen(":8081")
+	log.Panic(app.Listen(":8081"))
 
 }

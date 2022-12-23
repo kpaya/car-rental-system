@@ -15,6 +15,16 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 	return &UserRepository{DB: db}
 }
 
+func (u *UserRepository) FindByEmail(email string) entity.User {
+	var user entity.User
+	result := u.DB.QueryRow("SELECT id, name, email, password, status FROM users WHERE email = $1", email)
+	err := result.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Status)
+	if err != nil {
+		return entity.User{}
+	}
+	return user
+}
+
 func (u *UserRepository) Create(user *entity.User) error {
 	prep, err := u.DB.Prepare("INSERT INTO users (id, name, email, password, status) VALUES ($1, $2, $3, $4, $5)")
 	if err != nil {

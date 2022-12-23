@@ -45,11 +45,11 @@ type User struct {
 	Password string        `json:"-" validate:"required"`
 	Status   AccountStatus `json:"status" validate:"required"`
 	Email    string        `json:"email" validate:"required"`
-	Phone    string
+	Phone    string        `json:"phone" validate:"required"`
 	Address  value_object.Location
 }
 
-func NewUser(id string, name string, password string, status AccountStatus, email string, phone string) *User {
+func NewUser(id string, name string, password string, status AccountStatus, email string, phone string) (*User, error) {
 	var user = new(User)
 	if id == "" {
 		id = uuid.NewString()
@@ -68,8 +68,10 @@ func NewUser(id string, name string, password string, status AccountStatus, emai
 	}
 	user.Password = string(hashedPassword)
 	user.Phone = phone
-	user.Validate()
-	return user
+	if err = user.Validate(); err != nil {
+		return nil, err
+	}
+	return user, nil
 }
 
 func NewMember(user *User, driverLicenseNumber string, driverLicenseExpire time.Time) *Member {
