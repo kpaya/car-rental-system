@@ -31,14 +31,6 @@ type Receptionist struct {
 	DateJoined time.Time
 }
 
-type UserRepository interface {
-	Create(user *User) error
-	Update(user *User) error
-	FindById(id string) (User, error)
-	Delete(id string) error
-	List() ([]User, error)
-}
-
 type User struct {
 	ID       string        `json:"id" validate:"uuid4"`
 	Name     string        `json:"name" validate:"required"`

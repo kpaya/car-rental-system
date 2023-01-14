@@ -8,23 +8,6 @@ import (
 )
 
 type VehicleStatus string
-type CarType string
-type VanType string
-
-const (
-	Economy      CarType = "Economy"
-	Compact      CarType = "Compact"
-	Intermediate CarType = "Intermediate"
-	Standard     CarType = "Standard"
-	FullSize     CarType = "FullSize"
-	Premium      CarType = "Premium"
-	Luxury       CarType = "Luxury"
-)
-
-const (
-	Passenger VanType = "Passenger"
-	Cargo     VanType = "Cargo"
-)
 
 const (
 	Avaliable     VehicleStatus = "Avaliable"
@@ -35,33 +18,19 @@ const (
 	Other         VehicleStatus = "Other"
 )
 
-type Car struct {
-	Type CarType
-	Vehicle
-}
+type SegmentCar string
 
-type Truck struct {
-	Type string
-	Vehicle
-}
-
-type SUV struct {
-	Type string
-	Vehicle
-}
-
-type Van struct {
-	Type VanType
-	Vehicle
-}
-
-type Motorcycle struct {
-	Type string
-	Vehicle
-}
+const (
+	Car        SegmentCar = "Car"
+	Truck      SegmentCar = "Truck"
+	SUV        SegmentCar = "SUV"
+	Van        SegmentCar = "Van"
+	Motorcycle SegmentCar = "Motorcycle"
+)
 
 type Vehicle struct {
 	ID                string `validate:"uuid4"`
+	SegmentCar        SegmentCar
 	LicenseNumber     string
 	StockNumber       string
 	PassengerCapacity int32
@@ -69,16 +38,25 @@ type Vehicle struct {
 	HasSunroof        bool
 	Status            VehicleStatus
 	Model             string
-	Make              string
 	ManufacturingYear int64
 	Mileage           int64
 }
 
-func NewVehicle(id string) *Vehicle {
+func NewVehicle(id string, segmentCar SegmentCar, licenseNumber string, stockNumber string, passengerCapacity int32, hasSunroof bool, model string, manufacturingYear int64, mileage int64) *Vehicle {
 	var vehicle = new(Vehicle)
 	if id == "" {
 		vehicle.ID = uuid.NewString()
 	}
+	vehicle.SegmentCar = segmentCar
+	vehicle.LicenseNumber = licenseNumber
+	vehicle.StockNumber = stockNumber
+	vehicle.PassengerCapacity = passengerCapacity
+	vehicle.HasSunroof = hasSunroof
+	vehicle.Status = Avaliable
+	vehicle.Model = model
+	vehicle.ManufacturingYear = manufacturingYear
+	vehicle.Mileage = mileage
+
 	return vehicle
 }
 
