@@ -8,10 +8,10 @@ import (
 )
 
 type FindAUserByIdUseCase struct {
-	Repository repository_interfaces.RepositoryInterface
+	Repository repository_interfaces.UserRepositoryInterface
 }
 
-func NewFindAUserByIdUseCase(repository repository_interfaces.RepositoryInterface) FindAUserByIdUseCase {
+func NewFindAUserByIdUseCase(repository repository_interfaces.UserRepositoryInterface) FindAUserByIdUseCase {
 	return FindAUserByIdUseCase{Repository: repository}
 }
 

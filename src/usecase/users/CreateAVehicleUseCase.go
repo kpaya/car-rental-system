@@ -17,7 +17,7 @@ func NewCreateVehicleUseCase(repository repository_interfaces.VehicleRepositoryI
 }
 
 func (v *CreateAVehicleUseCase) Execute(input dto.InputCreateAVehicleDTO) dto.OutputCreateAVehicleDTO {
-	vehicle := entity.NewVehicle("", entity.SegmentCar(input.SegmentCar), input.LicenseNumber, input.StockNumber, input.PassengerCapacity, input.HasSunroof, input.Model, input.ManufacturingYear, input.Mileage)
+	vehicle := entity.NewVehicle("", entity.SegmentCar(input.SegmentCar), input.LicenseNumber, input.StockNumber, input.PassengerCapacity, input.Barcode, input.HasSunroof, input.Model, input.ManufacturingYear, input.Mileage)
 
 	if err := v.Repository.Create(vehicle); err != nil {
 		return dto.OutputCreateAVehicleDTO{}

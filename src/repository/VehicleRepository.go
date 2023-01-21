@@ -19,10 +19,10 @@ func NewVehicleRepository(db *sql.DB) *VehicleRepository {
 
 func (v *VehicleRepository) Create(vehicle *entity.Vehicle) error {
 	stmt, err := v.DB.Prepare("INSERT INTO vehicle (id, segment_car, license_number, stock_number, passenger_capacity, barcode, has_sunroof, status, model, manufacturing_year, milage) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)")
-	defer stmt.Close()
 	if err != nil {
 		return err
 	}
+	defer stmt.Close()
 	var convertSunroof int8
 	if vehicle.HasSunroof {
 		convertSunroof = 1
@@ -41,10 +41,10 @@ func (v *VehicleRepository) Update(vehicle *entity.Vehicle) error {
 		return errors.New("we couldn't be able to find the record")
 	}
 	stmt, err := v.DB.Prepare("UPDATE vehicle SET segment_car = $1, license_number = $2, stock_number = $3, passenger_capacity = $4, barcode = $5, has_sunroof = $6, status = $7, model = $8, manufacturing_year = $9, milage = $10")
-	defer stmt.Close()
 	if err != nil {
 		return err
 	}
+	defer stmt.Close()
 	_, err = stmt.Exec(vehicle.SegmentCar, vehicle.LicenseNumber, vehicle.StockNumber, vehicle.PassengerCapacity, vehicle.Barcode, vehicle.HasSunroof, vehicle.Status, vehicle.Model, vehicle.ManufacturingYear, vehicle.Mileage)
 	if err != nil {
 		return err
@@ -66,10 +66,10 @@ func (v *VehicleRepository) FindById(id string) *entity.Vehicle {
 func (v *VehicleRepository) List() []*entity.Vehicle {
 	var listVehicles []*entity.Vehicle
 	rows, err := v.DB.Query("SELECT * FROM vehicle")
-	defer rows.Close()
 	if err != nil {
 		return listVehicles
 	}
+	defer rows.Close()
 	for rows.Next() {
 		var vehicle *entity.Vehicle
 		err := rows.Scan(&vehicle.ID, &vehicle.SegmentCar, &vehicle.LicenseNumber, &vehicle.StockNumber, &vehicle.PassengerCapacity, &vehicle.Barcode, &vehicle.HasSunroof, &vehicle.Status, &vehicle.Model, &vehicle.ManufacturingYear, &vehicle.Mileage)

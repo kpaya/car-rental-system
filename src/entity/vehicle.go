@@ -42,7 +42,7 @@ type Vehicle struct {
 	Mileage           int64
 }
 
-func NewVehicle(id string, segmentCar SegmentCar, licenseNumber string, stockNumber string, passengerCapacity int32, hasSunroof bool, model string, manufacturingYear int64, mileage int64) *Vehicle {
+func NewVehicle(id string, segmentCar SegmentCar, licenseNumber string, stockNumber string, passengerCapacity int32, barcode string, hasSunroof bool, model string, manufacturingYear int64, mileage int64) *Vehicle {
 	var vehicle = new(Vehicle)
 	if id == "" {
 		vehicle.ID = uuid.NewString()
@@ -51,6 +51,7 @@ func NewVehicle(id string, segmentCar SegmentCar, licenseNumber string, stockNum
 	vehicle.LicenseNumber = licenseNumber
 	vehicle.StockNumber = stockNumber
 	vehicle.PassengerCapacity = passengerCapacity
+	vehicle.Barcode = barcode
 	vehicle.HasSunroof = hasSunroof
 	vehicle.Status = Avaliable
 	vehicle.Model = model

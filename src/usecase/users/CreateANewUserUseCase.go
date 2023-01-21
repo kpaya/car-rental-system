@@ -9,10 +9,10 @@ import (
 )
 
 type CreateANewUserUseCase struct {
-	Repository repository_interfaces.RepositoryInterface
+	Repository repository_interfaces.UserRepositoryInterface
 }
 
-func NewCreateANewUserUseCase(repository repository_interfaces.RepositoryInterface) CreateANewUserUseCase {
+func NewCreateANewUserUseCase(repository repository_interfaces.UserRepositoryInterface) CreateANewUserUseCase {
 	return CreateANewUserUseCase{Repository: repository}
 }
 
