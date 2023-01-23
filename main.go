@@ -39,7 +39,39 @@ func init() {
 func main() {
 	app := fiber.New()
 
-	app.Post("/user", func(c *fiber.Ctx) error {
+	app.Post("/token", func(c *fiber.Ctx) error {
+		userRepository := repository.NewUserRepository(Db)
+		findUserUseCase := usecase.NewFindUserByEmailAndPasswordUseCase(userRepository)
+		var findUserInput dto.InputFindUserByEmailAndPasswordDTO
+
+		json.Unmarshal(c.Body(), &findUserInput)
+
+		userFound, err := findUserUseCase.Execute(findUserInput)
+
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"msg":  err.Error(),
+				"code": fiber.StatusBadRequest,
+			})
+		}
+
+		token, err := JwtService.CreateJWTToAccess(userFound.ID, userFound.Name, userFound.Email)
+
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"msg":  err.Error(),
+				"code": fiber.StatusBadRequest,
+			})
+		}
+
+		return c.Status(200).JSON(fiber.Map{
+			"code": token,
+		})
+	})
+
+	user := app.Group("/user", JwtService.ValidateJWTToAccess)
+
+	user.Post("/", func(c *fiber.Ctx) error {
 		var input dto.InputCreateANewUserDTO
 		// if err := c.BodyParser(&input); err != nil {
 		if err := json.Unmarshal(c.Body(), &input); err != nil {
@@ -63,7 +95,7 @@ func main() {
 		return nil
 	})
 
-	app.Get("/user/:id<guid>", func(c *fiber.Ctx) error {
+	user.Get("/:id<guid>", func(c *fiber.Ctx) error {
 		id := c.Params("id")
 		if id == "" {
 			code := fiber.StatusBadRequest
@@ -86,7 +118,7 @@ func main() {
 		return nil
 	})
 
-	app.Get("/user", JwtService.ValidateJWTToAccess, func(c *fiber.Ctx) error {
+	user.Get("/", func(c *fiber.Ctx) error {
 		repository := repository.NewUserRepository(Db)
 		usecase := usecase.NewListUserUseCase(repository)
 
@@ -117,36 +149,6 @@ func main() {
 
 		return c.JSON(output)
 
-	})
-
-	app.Post("/token", func(c *fiber.Ctx) error {
-		userRepository := repository.NewUserRepository(Db)
-		findUserUseCase := usecase.NewFindUserByEmailAndPasswordUseCase(userRepository)
-		var findUserInput dto.InputFindUserByEmailAndPasswordDTO
-
-		json.Unmarshal(c.Body(), &findUserInput)
-
-		userFound, err := findUserUseCase.Execute(findUserInput)
-
-		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"msg":  err.Error(),
-				"code": fiber.StatusBadRequest,
-			})
-		}
-
-		token, err := JwtService.CreateJWTToAccess(userFound.ID, userFound.Name, userFound.Email)
-
-		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"msg":  err.Error(),
-				"code": fiber.StatusBadRequest,
-			})
-		}
-
-		return c.Status(200).JSON(fiber.Map{
-			"code": token,
-		})
 	})
 
 	log.Panic(app.Listen(":8081"))
