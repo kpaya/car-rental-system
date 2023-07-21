@@ -69,7 +69,13 @@ func main() {
 		})
 	})
 
+<<<<<<< HEAD
 	app.Post("/user/create", func(c *fiber.Ctx) error {
+=======
+	user := app.Group("/user", JwtService.ValidateJWTToAccess)
+
+	user.Post("/", func(c *fiber.Ctx) error {
+>>>>>>> 42239aee2d434c956ec3b916ea87720f6ec82609
 		var input dto.InputCreateANewUserDTO
 		if err := c.BodyParser(&input); err != nil {
 			code := fiber.StatusBadRequest
@@ -92,9 +98,13 @@ func main() {
 		return nil
 	})
 
+<<<<<<< HEAD
 	userGroupRouter := app.Group("/user", JwtService.ValidateJWTToAccess)
 
 	userGroupRouter.Get("/:id<guid>", func(c *fiber.Ctx) error {
+=======
+	user.Get("/:id<guid>", func(c *fiber.Ctx) error {
+>>>>>>> 42239aee2d434c956ec3b916ea87720f6ec82609
 		id := c.Params("id")
 		if id == "" {
 			code := fiber.StatusBadRequest
@@ -117,7 +127,11 @@ func main() {
 		return nil
 	})
 
+<<<<<<< HEAD
 	userGroupRouter.Get("/list", func(c *fiber.Ctx) error {
+=======
+	user.Get("/", func(c *fiber.Ctx) error {
+>>>>>>> 42239aee2d434c956ec3b916ea87720f6ec82609
 		repository := repository.NewUserRepository(Db)
 		usecase := usecase.NewListUserUseCase(repository)
 
