@@ -8,15 +8,18 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/joho/godotenv"
 	"github.com/kpaya/car-rental-system/src/infra/database"
 	"github.com/kpaya/car-rental-system/src/repository"
+	"github.com/kpaya/car-rental-system/src/service"
 	usecase "github.com/kpaya/car-rental-system/src/usecase/users"
 	"github.com/kpaya/car-rental-system/src/usecase/users/dto"
 	_ "github.com/lib/pq"
 )
 
 var Db *sql.DB
+var JwtService *service.JWTService
 
 func init() {
 	err := godotenv.Load()
@@ -25,6 +28,12 @@ func init() {
 	}
 
 	Db = database.NewDb()
+
+	JwtService = service.NewJWTService(jwt.RegisteredClaims{
+		Issuer:   "RentalCarSystem",
+		Subject:  "CreateJWTToRouterAccess",
+		Audience: []string{"Users"},
+	})
 }
 
 func main() {
@@ -77,7 +86,7 @@ func main() {
 		return nil
 	})
 
-	app.Get("/user", func(c *fiber.Ctx) error {
+	app.Get("/user", JwtService.ValidateJWTToAccess, func(c *fiber.Ctx) error {
 		repository := repository.NewUserRepository(Db)
 		usecase := usecase.NewListUserUseCase(repository)
 
@@ -89,10 +98,7 @@ func main() {
 				"code": code,
 			})
 		}
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
-			"result": output,
-			"IP":     c.IP(),
-		})
+		return c.Status(fiber.StatusOK).JSON(output)
 	})
 
 	app.Post("/vehicle", func(c *fiber.Ctx) error {
@@ -111,6 +117,36 @@ func main() {
 
 		return c.JSON(output)
 
+	})
+
+	app.Post("/token", func(c *fiber.Ctx) error {
+		userRepository := repository.NewUserRepository(Db)
+		findUserUseCase := usecase.NewFindUserByEmailAndPasswordUseCase(userRepository)
+		var findUserInput dto.InputFindUserByEmailAndPasswordDTO
+
+		json.Unmarshal(c.Body(), &findUserInput)
+
+		userFound, err := findUserUseCase.Execute(findUserInput)
+
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"msg":  err.Error(),
+				"code": fiber.StatusBadRequest,
+			})
+		}
+
+		token, err := JwtService.CreateJWTToAccess(userFound.ID, userFound.Name, userFound.Email)
+
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"msg":  err.Error(),
+				"code": fiber.StatusBadRequest,
+			})
+		}
+
+		return c.Status(200).JSON(fiber.Map{
+			"code": token,
+		})
 	})
 
 	log.Panic(app.Listen(":8081"))

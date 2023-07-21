@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/kpaya/car-rental-system/src/entity"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserRepository struct {
@@ -93,4 +94,20 @@ func (u *UserRepository) List() ([]entity.User, error) {
 		listUsers = append(listUsers, user)
 	}
 	return listUsers, nil
+}
+
+func (u *UserRepository) FindUserByEmailAndPassword(email string, password string) (entity.User, error) {
+	var user entity.User
+	row := u.DB.QueryRow("SELECT id, name, email, password, status FROM users WHERE email = $1", email)
+
+	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Status)
+	if err != nil {
+		return entity.User{}, err
+	}
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		return entity.User{}, err
+	}
+
+	return user, nil
 }
