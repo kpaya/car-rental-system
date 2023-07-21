@@ -20,6 +20,15 @@ const (
 	None        AccountStatus = "None"
 )
 
+type User struct {
+	ID       string        `json:"id" validate:"uuid4"`
+	Name     string        `json:"name" validate:"required"`
+	Password string        `json:"-" validate:"required"`
+	Status   AccountStatus `json:"status" validate:"required"`
+	Email    string        `json:"email" validate:"email,required"`
+	Phone    string        `json:"phone" validate:"required"`
+	Address  value_object.Location
+}
 type Member struct {
 	User
 	DriverLicenseNumber string
@@ -29,16 +38,6 @@ type Member struct {
 type Receptionist struct {
 	User
 	DateJoined time.Time
-}
-
-type User struct {
-	ID       string        `json:"id" validate:"uuid4"`
-	Name     string        `json:"name" validate:"required"`
-	Password string        `json:"-" validate:"required"`
-	Status   AccountStatus `json:"status" validate:"required"`
-	Email    string        `json:"email" validate:"email,required"`
-	Phone    string        `json:"phone" validate:"required"`
-	Address  value_object.Location
 }
 
 func NewUser(id string, name string, password string, status AccountStatus, email string, phone string) (*User, error) {

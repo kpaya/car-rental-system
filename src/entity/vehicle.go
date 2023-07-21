@@ -31,14 +31,14 @@ const (
 type Vehicle struct {
 	ID                string `validate:"uuid4"`
 	SegmentCar        SegmentCar
-	LicenseNumber     string
-	StockNumber       string
-	PassengerCapacity int32
-	Barcode           string
-	HasSunroof        bool
+	LicenseNumber     string `validate:"required" json:"licenseNumber"`
+	StockNumber       string `validate:"required" json:"stockModel"`
+	PassengerCapacity int32  `validate:"required" json:"capacity"`
+	Barcode           string `validate:"required,uuid" json:"barcode"`
+	HasSunroof        bool   `validate:"required" json:"hasSunroof"`
 	Status            VehicleStatus
-	Model             string
-	ManufacturingYear int64
+	Model             string `validate:"required" json:"model"`
+	ManufacturingYear int64  `validate:"required" json:"year"`
 	Mileage           int64
 }
 

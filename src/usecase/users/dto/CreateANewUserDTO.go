@@ -3,11 +3,10 @@ package dto
 import "github.com/kpaya/car-rental-system/src/entity"
 
 type InputCreateANewUserDTO struct {
-	Name     string
-	Email    string
-	Password string
-	Status   entity.AccountStatus
-	Phone    string
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	Phone    string `json:"phone"`
 }
 
 type OutputCreateANewUserDTO struct {
