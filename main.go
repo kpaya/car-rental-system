@@ -132,7 +132,9 @@ func main() {
 		return c.Status(fiber.StatusOK).JSON(output)
 	})
 
-	app.Post("/vehicle", func(c *fiber.Ctx) error {
+	vehicleRouterGroup := app.Group("/vehicle", JwtService.ValidateJWTToAccess)
+
+	vehicleRouterGroup.Post("/create", func(c *fiber.Ctx) error {
 		var inputDto dto.InputCreateAVehicleDTO
 		repository := repository.NewVehicleRepository(Db)
 		usecase := usecase.NewCreateVehicleUseCase(repository)

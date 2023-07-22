@@ -27,7 +27,7 @@ type User struct {
 	Status   AccountStatus `json:"status" validate:"required"`
 	Email    string        `json:"email" validate:"email,required"`
 	Phone    string        `json:"phone" validate:"required"`
-	Address  value_object.Location
+	Address  value_object.Address
 }
 type Member struct {
 	User
@@ -40,7 +40,7 @@ type Receptionist struct {
 	DateJoined time.Time
 }
 
-func NewUser(id string, name string, password string, status AccountStatus, email string, phone string) (*User, error) {
+func NewUser(id string, name string, password string, status AccountStatus, email string, phone string, address value_object.Address) (*User, error) {
 	var user = new(User)
 	if id == "" {
 		id = uuid.NewString()
@@ -53,6 +53,7 @@ func NewUser(id string, name string, password string, status AccountStatus, emai
 	user.ID = id
 	user.Name = name
 	user.Email = email
+	user.Address = address
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	if err != nil {
 		log.Panic("error to encrypt password from user")

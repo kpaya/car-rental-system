@@ -1,13 +1,13 @@
 package dto
 
 type InputFindUserByEmailAndPasswordDTO struct {
-	Email    string
-	Password string
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type OutputFindUserByEmailAndPasswordDTO struct {
-	ID     string
-	Name   string
-	Email  string
-	Status string
+	ID     string `json:"id"`
+	Name   string `json:"name"`
+	Email  string `json:"email"`
+	Status string `json:"status"`
 }

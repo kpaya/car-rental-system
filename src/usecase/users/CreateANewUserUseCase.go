@@ -21,7 +21,7 @@ func (u *CreateANewUserUseCase) Execute(input dto.InputCreateANewUserDTO) (dto.O
 	if userFound.ID != "" {
 		return dto.OutputCreateANewUserDTO{}, errors.New("this email is already in use")
 	}
-	user, err := entity.NewUser("", input.Name, input.Password, entity.Active, input.Email, input.Phone)
+	user, err := entity.NewUser("", input.Name, input.Password, entity.Active, input.Email, input.Phone, input.Address)
 	if err != nil {
 		return dto.OutputCreateANewUserDTO{}, err
 	}
@@ -30,11 +30,12 @@ func (u *CreateANewUserUseCase) Execute(input dto.InputCreateANewUserDTO) (dto.O
 		return dto.OutputCreateANewUserDTO{}, err
 	}
 	output := dto.OutputCreateANewUserDTO{
-		Id:     user.ID,
-		Name:   user.Name,
-		Email:  user.Email,
-		Status: user.Status,
-		Phone:  user.Phone,
+		Id:      user.ID,
+		Name:    user.Name,
+		Email:   user.Email,
+		Status:  user.Status,
+		Phone:   user.Phone,
+		Address: user.Address,
 	}
 
 	return output, nil

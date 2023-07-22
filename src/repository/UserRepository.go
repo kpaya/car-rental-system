@@ -31,10 +31,28 @@ func (u *UserRepository) Create(user *entity.User) error {
 	if err != nil {
 		return err
 	}
+
+	defer prep.Close()
+
 	_, err = prep.Exec(user.ID, user.Name, user.Email, user.Password, user.Status)
 	if err != nil {
 		return err
 	}
+
+	prep, err = u.DB.Prepare(`
+		INSERT INTO address 
+		(id, street_address, city, state, zip_cod, country, user_id)
+		VALUES
+		($1,$2,$3,$4,$5,$6,$7)
+	`)
+	if err != nil {
+		return err
+	}
+	_, err = prep.Exec(user.Address.ID, user.Address.StreetAddress, user.Address.City, user.Address.State, user.Address.Zipcode, user.Address.Country, user.ID)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -27,5 +27,19 @@ func NewDb() *sql.DB {
 		log.Panic(err.Error())
 	}
 
+	if _, err = conn.Exec(`
+		CREATE TABLE IF NOT EXISTS address(
+			id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+			street_address VARCHAR(100),
+			city VARCHAR(100),
+			state VARCHAR(100),
+			zip_cod VARCHAR(11),
+			country VARCHAR(100),
+			user_id uuid REFERENCES users (id)
+		)
+	`); err != nil {
+		log.Panic(err.Error())
+	}
+
 	return conn
 }
