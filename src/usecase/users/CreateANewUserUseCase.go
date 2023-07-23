@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/kpaya/car-rental-system/src/entity"
+	"github.com/kpaya/car-rental-system/src/entity/value_object"
 	repository_interfaces "github.com/kpaya/car-rental-system/src/repository/interfaces"
 	"github.com/kpaya/car-rental-system/src/usecase/users/dto"
 )
@@ -21,7 +22,9 @@ func (u *CreateANewUserUseCase) Execute(input dto.InputCreateANewUserDTO) (dto.O
 	if userFound.ID != "" {
 		return dto.OutputCreateANewUserDTO{}, errors.New("this email is already in use")
 	}
-	user, err := entity.NewUser("", input.Name, input.Password, entity.Active, input.Email, input.Phone, input.Address)
+	address := value_object.NewAddress("", input.Address.StreetAddress, input.Address.City, input.Address.State, input.Address.Zipcode, input.Address.Country)
+
+	user, err := entity.NewUser("", input.Name, input.Password, entity.Active, input.Email, input.Phone, *address)
 	if err != nil {
 		return dto.OutputCreateANewUserDTO{}, err
 	}

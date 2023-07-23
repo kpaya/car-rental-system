@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/kpaya/car-rental-system/src/entity"
+	"github.com/kpaya/car-rental-system/src/entity/value_object"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -39,12 +40,7 @@ func (u *UserRepository) Create(user *entity.User) error {
 		return err
 	}
 
-	prep, err = u.DB.Prepare(`
-		INSERT INTO address 
-		(id, street_address, city, state, zip_cod, country, user_id)
-		VALUES
-		($1,$2,$3,$4,$5,$6,$7)
-	`)
+	prep, err = u.DB.Prepare("INSERT INTO address (id, street_address, city, state, zip_cod, country, user_id) VALUES ($1,$2,$3,$4,$5,$6,$7)")
 	if err != nil {
 		return err
 	}
@@ -99,16 +95,33 @@ func (u *UserRepository) Delete(id string) error {
 
 func (u *UserRepository) List() ([]entity.User, error) {
 	var listUsers []entity.User
-	rows, err := u.DB.Query("SELECT id, name, email, password, status FROM users")
+	rows, err := u.DB.Query(`
+	SELECT
+		users.id,
+		users.name,
+		users.email,
+		users.password,
+		users.status,
+		COALESCE(ad.id, CAST('00000000-0000-0000-0000-000000000000' as UUID)) as id,
+		COALESCE(ad.street_address, CAST('null' as varchar)) as street_address,
+		COALESCE(ad.city, CAST('null' as varchar)) as city,
+		COALESCE(ad.state, CAST('null' as varchar))as state,
+		COALESCE(ad.zip_cod, CAST('null' as varchar)) as zip_cod,
+		COALESCE(ad.country, CAST('null' as varchar)) as country
+	FROM users 
+		LEFT JOIN address ad ON ad.user_id = users.id
+	`)
 	if err != nil {
 		return []entity.User{}, err
 	}
 	for rows.Next() {
 		var user entity.User
-		err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Status)
+		var address value_object.Address
+		err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Status, &address.ID, &address.StreetAddress, &address.City, &address.State, &address.Zipcode, &address.Country)
 		if err != nil {
 			return []entity.User{}, err
 		}
+		user.Address = address
 		listUsers = append(listUsers, user)
 	}
 	return listUsers, nil
