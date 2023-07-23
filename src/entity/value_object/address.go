@@ -1,8 +1,6 @@
 package value_object
 
 import (
-	"log"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 )
@@ -16,7 +14,7 @@ type Address struct {
 	Country       string `json:"contry"`
 }
 
-func NewAddress(id string, streetAddress string, city string, state string, zipcode string, country string) *Address {
+func NewAddress(id string, streetAddress string, city string, state string, zipcode string, country string) (*Address, error) {
 	var address = new(Address)
 	if id == "" {
 		address.ID = uuid.NewString()
@@ -27,14 +25,17 @@ func NewAddress(id string, streetAddress string, city string, state string, zipc
 	address.Zipcode = zipcode
 	address.Country = country
 
-	address.Validate()
+	if err := address.Validate(); err != nil {
+		return nil, err
+	}
 
-	return address
+	return address, nil
 }
 
-func (l *Address) Validate() {
+func (l *Address) Validate() error {
 	err := validator.New().Struct(l)
 	if err != nil {
-		log.Panic(err)
+		return err
 	}
+	return nil
 }

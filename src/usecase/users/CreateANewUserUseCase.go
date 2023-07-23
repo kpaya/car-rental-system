@@ -22,16 +22,21 @@ func (u *CreateANewUserUseCase) Execute(input dto.InputCreateANewUserDTO) (dto.O
 	if userFound.ID != "" {
 		return dto.OutputCreateANewUserDTO{}, errors.New("this email is already in use")
 	}
-	address := value_object.NewAddress("", input.Address.StreetAddress, input.Address.City, input.Address.State, input.Address.Zipcode, input.Address.Country)
+	address, err := value_object.NewAddress("", input.Address.StreetAddress, input.Address.City, input.Address.State, input.Address.Zipcode, input.Address.Country)
+	if err != nil {
+		return dto.OutputCreateANewUserDTO{}, err
+	}
 
 	user, err := entity.NewUser("", input.Name, input.Password, entity.Active, input.Email, input.Phone, *address)
 	if err != nil {
 		return dto.OutputCreateANewUserDTO{}, err
 	}
+
 	err = u.Repository.Create(user)
 	if err != nil {
 		return dto.OutputCreateANewUserDTO{}, err
 	}
+
 	output := dto.OutputCreateANewUserDTO{
 		Id:      user.ID,
 		Name:    user.Name,

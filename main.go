@@ -74,7 +74,7 @@ func main() {
 		if err := c.BodyParser(&input); err != nil {
 			code := fiber.StatusBadRequest
 			return c.Status(code).JSON(fiber.Map{
-				"msg":  fmt.Errorf(`error: %s`, err).Error(),
+				"msg":  err.Error(),
 				"code": code,
 			})
 		}
@@ -109,7 +109,7 @@ func main() {
 		if err != nil {
 			code := fiber.StatusBadRequest
 			return c.Status(code).JSON(fiber.Map{
-				"msg":  fmt.Errorf(`error: %s`, err).Error(),
+				"msg":  err.Error(),
 				"code": code,
 			})
 		}
@@ -125,7 +125,7 @@ func main() {
 		if err != nil {
 			code := fiber.StatusInternalServerError
 			return c.Status(code).JSON(fiber.Map{
-				"msg":  fmt.Errorf(`error: %s`, err.Error()),
+				"msg":  err.Error(),
 				"code": code,
 			})
 		}
