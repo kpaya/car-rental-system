@@ -13,7 +13,6 @@ import (
 	user_router "github.com/kpaya/car-rental-system/src/router/user"
 	vehicle_router "github.com/kpaya/car-rental-system/src/router/vehicle"
 	"github.com/kpaya/car-rental-system/src/service"
-	_ "github.com/lib/pq"
 )
 
 var Db *sql.DB
