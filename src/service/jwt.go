@@ -64,8 +64,8 @@ func (j *JWTService) ValidateJWTToAccess(c *fiber.Ctx) error {
 		return c.Next()
 	} else {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"msg":  err.Error(),
 			"code": fiber.StatusBadRequest,
-			"msg":  fmt.Sprintf("Error: %v", err.Error()),
 		})
 	}
 }
