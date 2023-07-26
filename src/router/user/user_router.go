@@ -13,7 +13,11 @@ import (
 
 func UserRouterInitializer(commons *router_dto.CommonsBundle) error {
 
-	commons.FiberApp.Post("/user/create", func(c *fiber.Ctx) error {
+	userGroupRouter := commons.FiberApp.Group("/user")
+
+	createUserRouterGroup := userGroupRouter.Group("/create")
+
+	createUserRouterGroup.Post("/member", func(c *fiber.Ctx) error {
 		var input dto.InputCreateANewUserDTO
 		if err := c.BodyParser(&input); err != nil {
 			code := fiber.StatusBadRequest
@@ -22,6 +26,8 @@ func UserRouterInitializer(commons *router_dto.CommonsBundle) error {
 				"code": code,
 			})
 		}
+
+		input.Type = "M"
 		repository := repository.NewUserRepository(commons.Db)
 		usecase := usecase.NewCreateANewUserUseCase(repository)
 		output, err := usecase.Execute(input)
@@ -36,9 +42,33 @@ func UserRouterInitializer(commons *router_dto.CommonsBundle) error {
 		return nil
 	})
 
-	userGroupRouter := commons.FiberApp.Group("/user", commons.Jwt.ValidateJWTToAccess)
+	createUserRouterGroup.Post("/receptionist", commons.Jwt.ValidateJWTToAccess, func(c *fiber.Ctx) error {
 
-	userGroupRouter.Get("/:id<guid>", func(c *fiber.Ctx) error {
+		var input dto.InputCreateANewUserDTO
+		if err := c.BodyParser(&input); err != nil {
+			code := fiber.StatusBadRequest
+			return c.Status(code).JSON(fiber.Map{
+				"msg":  err.Error(),
+				"code": code,
+			})
+		}
+		input.Type = "R"
+		repository := repository.NewUserRepository(commons.Db)
+		usecase := usecase.NewCreateANewUserUseCase(repository)
+		output, err := usecase.Execute(input)
+		if err != nil {
+			code := fiber.StatusBadRequest
+			return c.Status(code).JSON(fiber.Map{
+				"msg":  err.Error(),
+				"code": code,
+			})
+		}
+
+		c.Status(fiber.StatusCreated).JSON(output)
+		return nil
+	})
+
+	userGroupRouter.Get("/:id<guid>", commons.Jwt.ValidateJWTToAccess, func(c *fiber.Ctx) error {
 		id := c.Params("id")
 		if id == "" {
 			code := fiber.StatusBadRequest
@@ -61,7 +91,7 @@ func UserRouterInitializer(commons *router_dto.CommonsBundle) error {
 		return nil
 	})
 
-	userGroupRouter.Get("/list", func(c *fiber.Ctx) error {
+	userGroupRouter.Get("/list", commons.Jwt.ValidateJWTToAccess, func(c *fiber.Ctx) error {
 		repository := repository.NewUserRepository(commons.Db)
 		usecase := usecase.NewListUserUseCase(repository)
 

@@ -19,7 +19,7 @@ var Db *sql.DB
 var JwtService *service.JWTService
 
 func init() {
-	err := godotenv.Load()
+	err := godotenv.Load(".env")
 	if err != nil {
 		log.Panic(err.Error())
 	}

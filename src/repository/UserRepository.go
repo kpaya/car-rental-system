@@ -100,6 +100,7 @@ func (u *UserRepository) List() ([]entity.User, error) {
 		users.id,
 		users.name,
 		users.email,
+		users.type,
 		users.password,
 		users.status,
 		COALESCE(ad.id, CAST('00000000-0000-0000-0000-000000000000' as UUID)) as id,

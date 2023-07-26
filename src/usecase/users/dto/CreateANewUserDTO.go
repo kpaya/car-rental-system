@@ -11,6 +11,7 @@ type InputCreateANewUserDTO struct {
 	Password string               `json:"password"`
 	Phone    string               `json:"phone"`
 	Address  value_object.Address `json:"address"`
+	Type     string               `json:"type"`
 }
 
 type OutputCreateANewUserDTO struct {

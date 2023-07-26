@@ -27,6 +27,7 @@ type User struct {
 	Status   AccountStatus `json:"status" validate:"required"`
 	Email    string        `json:"email" validate:"email,required"`
 	Phone    string        `json:"phone" validate:"required"`
+	Type     string        `json:"type" validate:"required"`
 	Address  value_object.Address
 }
 type Member struct {
