@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/kpaya/car-rental-system/src/infra/middleware"
 	"github.com/kpaya/car-rental-system/src/repository"
 	router_dto "github.com/kpaya/car-rental-system/src/router"
 	usecase "github.com/kpaya/car-rental-system/src/usecase/users"
@@ -12,7 +13,7 @@ import (
 
 func VehicleRouterInitializer(commons *router_dto.CommonsBundle) error {
 
-	vehicleRouterGroup := commons.FiberApp.Group("/vehicle", commons.Jwt.ValidateJWTToAccess)
+	vehicleRouterGroup := commons.FiberApp.Group("/vehicle", middleware.UserValidationMiddleware)
 
 	vehicleRouterGroup.Post("/create", func(c *fiber.Ctx) error {
 		var inputDto dto.InputCreateAVehicleDTO

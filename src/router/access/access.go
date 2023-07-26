@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/kpaya/car-rental-system/src/repository"
 	router_dto "github.com/kpaya/car-rental-system/src/router"
+	"github.com/kpaya/car-rental-system/src/service"
 	usecase "github.com/kpaya/car-rental-system/src/usecase/users"
 	"github.com/kpaya/car-rental-system/src/usecase/users/dto"
 )
@@ -27,7 +28,7 @@ func AccessRouterInitializer(commons *router_dto.CommonsBundle) error {
 			})
 		}
 
-		token, err := commons.Jwt.CreateJWTToAccess(userFound.ID, userFound.Name, userFound.Email)
+		token, err := service.CreateJWTToAccess(userFound.ID, userFound.Name, userFound.Email)
 
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{

@@ -5,18 +5,15 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v4"
 	"github.com/joho/godotenv"
 	"github.com/kpaya/car-rental-system/src/infra/database"
 	router "github.com/kpaya/car-rental-system/src/router"
 	access_router "github.com/kpaya/car-rental-system/src/router/access"
 	user_router "github.com/kpaya/car-rental-system/src/router/user"
 	vehicle_router "github.com/kpaya/car-rental-system/src/router/vehicle"
-	"github.com/kpaya/car-rental-system/src/service"
 )
 
 var Db *sql.DB
-var JwtService *service.JWTService
 
 func init() {
 	err := godotenv.Load(".env")
@@ -25,12 +22,6 @@ func init() {
 	}
 
 	Db = database.NewDb()
-
-	JwtService = service.NewJWTService(jwt.RegisteredClaims{
-		Issuer:   "RentalCarSystem",
-		Subject:  "CreateJWTToRouterAccess",
-		Audience: []string{"Users"},
-	})
 }
 
 func main() {
@@ -38,7 +29,6 @@ func main() {
 
 	dataCommon := &router.CommonsBundle{
 		Db:       Db,
-		Jwt:      JwtService,
 		FiberApp: app,
 	}
 

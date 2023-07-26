@@ -28,7 +28,13 @@ func (u *UserRepository) FindByEmail(email string) entity.User {
 }
 
 func (u *UserRepository) Create(user *entity.User) error {
-	prep, err := u.DB.Prepare("INSERT INTO users (id, name, email, password, status) VALUES ($1, $2, $3, $4, $5)")
+	prep, err := u.DB.Prepare(
+		`INSERT INTO users 
+			(id, name, email, password, status)
+		VALUES
+			($1, $2, $3, $4, $5)
+	`)
+
 	if err != nil {
 		return err
 	}
@@ -40,7 +46,11 @@ func (u *UserRepository) Create(user *entity.User) error {
 		return err
 	}
 
-	prep, err = u.DB.Prepare("INSERT INTO address (id, street_address, city, state, zip_cod, country, user_id) VALUES ($1,$2,$3,$4,$5,$6,$7)")
+	prep, err = u.DB.Prepare(
+		`INSERT INTO address 
+			(id, street_address, city, state, zip_cod, country, user_id)
+		VALUES 
+			($1,$2,$3,$4,$5,$6,$7)`)
 	if err != nil {
 		return err
 	}
@@ -118,7 +128,7 @@ func (u *UserRepository) List() ([]entity.User, error) {
 	for rows.Next() {
 		var user entity.User
 		var address value_object.Address
-		err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Status, &address.ID, &address.StreetAddress, &address.City, &address.State, &address.Zipcode, &address.Country)
+		err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.Type, &user.Password, &user.Status, &address.ID, &address.StreetAddress, &address.City, &address.State, &address.Zipcode, &address.Country)
 		if err != nil {
 			return []entity.User{}, err
 		}

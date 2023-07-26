@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/kpaya/car-rental-system/src/infra/middleware"
 	"github.com/kpaya/car-rental-system/src/repository"
 	router_dto "github.com/kpaya/car-rental-system/src/router"
 	usecase "github.com/kpaya/car-rental-system/src/usecase/users"
@@ -42,7 +43,7 @@ func UserRouterInitializer(commons *router_dto.CommonsBundle) error {
 		return nil
 	})
 
-	createUserRouterGroup.Post("/receptionist", commons.Jwt.ValidateJWTToAccess, func(c *fiber.Ctx) error {
+	createUserRouterGroup.Post("/receptionist", middleware.UserValidationMiddleware, func(c *fiber.Ctx) error {
 
 		var input dto.InputCreateANewUserDTO
 		if err := c.BodyParser(&input); err != nil {
@@ -68,7 +69,7 @@ func UserRouterInitializer(commons *router_dto.CommonsBundle) error {
 		return nil
 	})
 
-	userGroupRouter.Get("/:id<guid>", commons.Jwt.ValidateJWTToAccess, func(c *fiber.Ctx) error {
+	userGroupRouter.Get("/:id<guid>", middleware.UserValidationMiddleware, func(c *fiber.Ctx) error {
 		id := c.Params("id")
 		if id == "" {
 			code := fiber.StatusBadRequest
@@ -91,7 +92,7 @@ func UserRouterInitializer(commons *router_dto.CommonsBundle) error {
 		return nil
 	})
 
-	userGroupRouter.Get("/list", commons.Jwt.ValidateJWTToAccess, func(c *fiber.Ctx) error {
+	userGroupRouter.Get("/list", middleware.UserValidationMiddleware, func(c *fiber.Ctx) error {
 		repository := repository.NewUserRepository(commons.Db)
 		usecase := usecase.NewListUserUseCase(repository)
 
