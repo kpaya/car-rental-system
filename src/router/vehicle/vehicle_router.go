@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/kpaya/car-rental-system/src/infra/middleware"
 	"github.com/kpaya/car-rental-system/src/repository"
 	router_dto "github.com/kpaya/car-rental-system/src/router"
@@ -27,9 +28,14 @@ func VehicleRouterInitializer(commons *router_dto.CommonsBundle) error {
 				"code": fiber.StatusBadRequest,
 			})
 		}
-		output := usecase.Execute(inputDto)
-
-		return c.JSON(output)
+		if c.Locals("jwtClaims").(jwt.MapClaims)["scp"] == "admin" {
+			output := usecase.Execute(inputDto)
+			return c.JSON(output)
+		}
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"msg":  "you must be an admin to create a vehicle",
+			"code": fiber.StatusUnauthorized,
+		})
 
 	})
 

@@ -1,7 +1,6 @@
 package service
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -10,7 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-func CreateJWTToAccess(id string, name string, email string) (string, error) {
+func CreateJWTToAccess(id string, name string, email string, scope string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		jwt.MapClaims{
 			"iss":   os.Getenv("JWT_ISSUER"),
@@ -19,6 +18,7 @@ func CreateJWTToAccess(id string, name string, email string) (string, error) {
 			"jti":   id,
 			"name":  name,
 			"email": email,
+			"scp":   scope,
 			"exp":   jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
 			"iat":   jwt.NewNumericDate(time.Now()),
 			"nbf":   jwt.NewNumericDate(time.Now()),
@@ -31,7 +31,7 @@ func CreateJWTToAccess(id string, name string, email string) (string, error) {
 	return jwtString, nil
 }
 
-func ValidateJWTToAccess(auth_header string) error {
+func ValidateJWTToAccess(auth_header string) (jwt.Claims, error) {
 	listString := strings.Split(auth_header, " ")
 	token, err := jwt.Parse(listString[1], func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -41,11 +41,11 @@ func ValidateJWTToAccess(auth_header string) error {
 	})
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if _, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		return nil
+		return token.Claims, nil
 	}
-	return errors.New("invalid token")
+	return nil, err
 }

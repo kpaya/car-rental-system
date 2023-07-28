@@ -30,9 +30,9 @@ func (u *UserRepository) FindByEmail(email string) entity.User {
 func (u *UserRepository) Create(user *entity.User) error {
 	prep, err := u.DB.Prepare(
 		`INSERT INTO users 
-			(id, name, email, password, status)
+			(id, name, email, password, status, type)
 		VALUES
-			($1, $2, $3, $4, $5)
+			($1, $2, $3, $4, $5, $6)
 	`)
 
 	if err != nil {
@@ -41,7 +41,7 @@ func (u *UserRepository) Create(user *entity.User) error {
 
 	defer prep.Close()
 
-	_, err = prep.Exec(user.ID, user.Name, user.Email, user.Password, user.Status)
+	_, err = prep.Exec(user.ID, user.Name, user.Email, user.Password, user.Status, user.Type)
 	if err != nil {
 		return err
 	}

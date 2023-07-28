@@ -28,7 +28,15 @@ func AccessRouterInitializer(commons *router_dto.CommonsBundle) error {
 			})
 		}
 
-		token, err := service.CreateJWTToAccess(userFound.ID, userFound.Name, userFound.Email)
+		var scope string
+
+		if userFound.Email == "admin" {
+			scope = "admin"
+		} else {
+			scope = "member"
+		}
+
+		token, err := service.CreateJWTToAccess(userFound.ID, userFound.Name, userFound.Email, scope)
 
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{

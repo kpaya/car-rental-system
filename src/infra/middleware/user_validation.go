@@ -15,13 +15,17 @@ func UserValidationMiddleware(c *fiber.Ctx) error {
 		})
 	}
 
-	if err := service.ValidateJWTToAccess(auth); err != nil {
+	jwtClaims, err := service.ValidateJWTToAccess(auth)
+
+	if err != nil {
 		code := fiber.StatusBadRequest
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"msg":  err.Error(),
 			"code": code,
 		})
 	}
+
+	c.Locals("jwtClaims", jwtClaims)
 
 	return c.Next()
 }
