@@ -10,4 +10,5 @@ type OutputFindUserByEmailAndPasswordDTO struct {
 	Name   string `json:"name"`
 	Email  string `json:"email"`
 	Status string `json:"status"`
+	Type   string `json:"type"`
 }

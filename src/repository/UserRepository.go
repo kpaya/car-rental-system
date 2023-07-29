@@ -140,9 +140,9 @@ func (u *UserRepository) List() ([]entity.User, error) {
 
 func (u *UserRepository) FindUserByEmailAndPassword(email string, password string) (entity.User, error) {
 	var user entity.User
-	row := u.DB.QueryRow("SELECT id, name, email, password, status FROM users WHERE email = $1", email)
+	row := u.DB.QueryRow("SELECT id, name, email, password, status, type FROM users WHERE email = $1", email)
 
-	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Status)
+	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Status, &user.Type)
 	if err != nil {
 		return entity.User{}, err
 	}

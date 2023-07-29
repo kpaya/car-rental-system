@@ -28,12 +28,12 @@ func VehicleRouterInitializer(commons *router_dto.CommonsBundle) error {
 				"code": fiber.StatusBadRequest,
 			})
 		}
-		if c.Locals("jwtClaims").(jwt.MapClaims)["scp"] == "admin" {
+		if c.Locals("jwtClaims").(jwt.MapClaims)["scp"] == "receptionist" {
 			output := usecase.Execute(inputDto)
 			return c.JSON(output)
 		}
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"msg":  "you must be an admin to create a vehicle",
+			"msg":  "you must be a receptionist to create a vehicle",
 			"code": fiber.StatusUnauthorized,
 		})
 

@@ -30,8 +30,8 @@ func AccessRouterInitializer(commons *router_dto.CommonsBundle) error {
 
 		var scope string
 
-		if userFound.Email == "admin" {
-			scope = "admin"
+		if userFound.Type == "R" {
+			scope = "receptionist"
 		} else {
 			scope = "member"
 		}

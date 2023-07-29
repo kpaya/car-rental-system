@@ -26,6 +26,7 @@ func (u *FindUserByEmailAndPasswordUseCase) Execute(input dto.InputFindUserByEma
 		ID:     user.ID,
 		Name:   user.Name,
 		Email:  user.Email,
+		Type:   user.Type,
 		Status: string(user.Status),
 	}, nil
 }
